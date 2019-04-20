@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+        role: {{ .Values.name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.name }}
+      containers:
+        - name: {{ .Values.name }}
+          image: {{ .Values.repository }}
+          imagePullPolicy: Always
+          ports:
+            - name: clamav
+              containerPort: {{ .Values.clamav_port }}
+              protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.namespace }}
+    role: {{ .Values.name }}
+  ports:
+    - name: {{ .Values.name }}
+      port: {{ .Values.clamav_port }}
+      targetPort: {{ .Values.clamav_port }}
