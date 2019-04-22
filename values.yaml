@@ -1,1 +1,2 @@
-clamav_port: "3310"
+clamav:
+  port: "3310"
