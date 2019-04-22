@@ -18,8 +18,8 @@ spec:
           image: {{ .Values.repository }}
           imagePullPolicy: Always
           ports:
-            - name: clamav
-              containerPort: {{ .Values.clamav_port }}
+            - name: {{ .Values.name }}
+              containerPort: {{ .Values.clamav.port }}
               protocol: TCP
 ---
 
@@ -34,5 +34,5 @@ spec:
     role: {{ .Values.name }}
   ports:
     - name: {{ .Values.name }}
-      port: {{ .Values.clamav_port }}
-      targetPort: {{ .Values.clamav_port }}
+      port: {{ .Values.clamav.port }}
+      targetPort: {{ .Values.clamav.port }}
