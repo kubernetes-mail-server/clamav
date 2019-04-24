@@ -17,6 +17,9 @@ spec:
         - name: {{ .Values.name }}
           image: {{ .Values.repository }}
           imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: connection-map
           ports:
             - name: {{ .Values.name }}
               containerPort: {{ .Values.port }}
