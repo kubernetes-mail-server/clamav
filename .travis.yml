@@ -70,7 +70,7 @@ jobs:
         - helm template
             --set name=${NAME}
             --set namespace=${NAMESPACE}
-            --set port=$(kubectl get configmap connection-map -o=jsonpath="{.data.CLAMAV_PORT}")
+            --set port=$(kubectl get cm services-info -o=jsonpath="{.data.CLAMAV_PORT}")
             --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
             $PWD/kubernetes | kubectl apply -f -
         - kubectl scale --replicas=${REPLICAS} deployment/${NAME}

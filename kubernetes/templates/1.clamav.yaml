@@ -19,7 +19,7 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
-                name: connection-map
+                name: services-info
           ports:
             - name: {{ .Values.name }}
               containerPort: {{ .Values.port }}
