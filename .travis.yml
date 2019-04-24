@@ -68,7 +68,6 @@ jobs:
         - kubectl scale --replicas=0 deployment/${NAME} || true
         - kubectl get deployments
         - helm template
-            -f $PWD/values.yaml
             --set name=${NAME}
             --set namespace=${NAMESPACE}
             --set port=$(kubectl get configmap connection-map -o=jsonpath="{.data.CLAMAV_PORT}")
