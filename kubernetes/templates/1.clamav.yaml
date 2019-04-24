@@ -19,7 +19,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - name: {{ .Values.name }}
-              containerPort: {{ .Values.clamav.port }}
+              containerPort: {{ .Values.port }}
               protocol: TCP
 ---
 
@@ -34,5 +34,5 @@ spec:
     role: {{ .Values.name }}
   ports:
     - name: {{ .Values.name }}
-      port: {{ .Values.clamav.port }}
-      targetPort: {{ .Values.clamav.port }}
+      port: {{ .Values.port }}
+      targetPort: {{ .Values.port }}
