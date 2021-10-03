@@ -17,10 +17,10 @@ env:
     - secure: "bPDvyTdX7O3XML6L8EVxdYH0n/Y+qJCyRWCz7KRGJjGXgEO/I/YFDJ5tmxzkVisV6WRwMKi+SOLw61PnaLnXYfYoLGXbWOWCRA2UkwhhjNFSoEY5eICp1nBWt754wBcji0KLERTwc57Z8cHdySSC/52VrPmZR8hgveoA4JU8K2+K9IiuuetJPaCQFW6geEii4i8nNuzC5uyQXe2+T1tXCxeEtWFZ7QhsXviXUkIOEDCkgWTwI+Dly7ce+qqcVCK08/d+Yl1bpiOBppCw7TIoHxTTxt5awYE+YUjzMTmV6j5uXyDbzb5kBDQoRCACZMIKfzOTPmXDZDGC+Uoya7hV3babD13d1AHff+HqUymUmM6IOfPwoXwZFtmOpAVpVW7cqvTqOD4vv/t+Q69nw6u1qUPrg4IokUdYnVgLvqiliT1XXuI49FxzUsTzQBEoavtKvDierGUEQTDLJbDhnQXga7ECLHXzfZBKuC+eky1coTGPGBv5bKqm/4/TOeece8siIOQNlHQuCPHqVl0hcLN3ANgzYvmozqAQ5vFIi9tJp+3FaXuuzQVQ2/L34fQBya4bK2bPI3nHBrYxHLQbE7Q+7ubkRkXHJxcixWbKyUG7FVWg6BkjZAWp5D9cUvgYcQln5vvjFmiV6vQ8oCt8iyDquw/RetP9V/8hqxBmCK4lzLQ="
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_acd94a90d35b_key -iv $encrypted_acd94a90d35b_iv -in kubeconfig.enc -out kubeconfig -d
-  - KUBE_LATEST_VERSION="v1.14.1"
-  - HELM_LATEST_VERSION="v2.13.1"
-  - HELM=https://storage.googleapis.com/kubernetes-helm/helm-${HELM_LATEST_VERSION}-linux-amd64.tar.gz
+  - openssl aes-256-cbc -K $encrypted_c25bfdc08df8_key -iv $encrypted_c25bfdc08df8_iv -in kubeconfig.enc -out kubeconfig -d
+  - KUBE_LATEST_VERSION="v1.19.0"
+  - HELM_LATEST_VERSION="v3.3.1"
+  - HELM=https://get.helm.sh/helm-${HELM_LATEST_VERSION}-linux-amd64.tar.gz
   - KUBECTL=https://storage.googleapis.com/kubernetes-release/release/${KUBE_LATEST_VERSION}/bin/linux/amd64/kubectl
   - curl -L ${KUBECTL} -o $PWD/kubectl
   - curl -L ${HELM} | tar xzO linux-amd64/helm > $PWD/helm
@@ -64,17 +64,17 @@ jobs:
       if: branch = master and type != pull_request
       script:
         - export KUBECONFIG=$PWD/kubeconfig
-        - kubectl get pods
-        - kubectl scale --replicas=0 deployment/${NAME} || true
-        - kubectl get deployments
+        - kubectl get pods -n ${NAMESPACE}
+        - kubectl scale --replicas=0 -n ${NAMESPACE} deployment/${NAME} || true
+        - kubectl get deployments -n ${NAMESPACE}
         - helm template
             --set name=${NAME}
             --set namespace=${NAMESPACE}
-            --set port=$(kubectl get cm services-info -o=jsonpath="{.data.CLAMAV_PORT}")
+            --set port=$(kubectl get cm -n ${NAMESPACE} services-info -o=jsonpath="{.data.CLAMAV_PORT}")
             --set repository=${IMAGE}:${TRAVIS_BUILD_ID}
             $PWD/kubernetes | kubectl apply -f -
-        - kubectl scale --replicas=${REPLICAS} deployment/${NAME}
-        - kubectl get deployments
+        - kubectl scale --replicas=${REPLICAS} -n ${NAMESPACE} deployment/${NAME}
+        - kubectl get deployments -n ${NAMESPACE}
     - stage: cleanup
       name: Remove the docker image from the cache
       script:
