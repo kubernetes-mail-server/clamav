@@ -15,8 +15,6 @@ spec:
         app: {{ .Values.namespace }}
         role: {{ .Values.name }}
     spec:
-      imagePullSecrets:
-        - name: {{ .Values.name }}
       containers:
         - name: {{ .Values.name }}
           image: {{ .Values.repository }}
