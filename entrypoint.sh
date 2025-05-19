@@ -19,12 +19,14 @@ function optional () {
     sed -i "s~{{ $1 }}~$v~g" $2
 }
 
+echo "ClamAV Version: $(clamscan --version)"
+
 for file in $(find /etc/clamav -type f); do
     required CLAMAV_PORT ${file}
 done
 
 # Bootstrap the database if clamav is running for the first time
-[ -f /data/main.cvd ] || freshclam
+[ -f /data/main.cvd ] || freshclam --stdout
 
 # Run the update daemon
 freshclam -d -c 6
